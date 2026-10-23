@@ -38,7 +38,7 @@ save_notebook('Udaplay_01_starter_project.ipynb', [
          '    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")'),
     code('from pathlib import Path\nimport json\n\n'
          'from lib.udaplay import configure_environment, load_games, GameVectorStore\n\n'
-         'settings = configure_environment()\n'
+         'settings = configure_environment(require_web=False)\n'
          'print("Required environment variables are configured.")\n'
          'print("Embedding model:", settings["embedding_model"])'),
     md('## Load and validate the dataset\n\nEach JSON file becomes a document with the game name, '

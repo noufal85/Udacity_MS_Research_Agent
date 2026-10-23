@@ -2,7 +2,7 @@
 
 UdaPlay answers video-game questions using a persistent ChromaDB collection of fifteen supplied games. It retrieves local evidence, evaluates whether that evidence answers the question, searches Tavily when needed, and returns a structured answer with confidence and source citations. The supplied state-machine library executes the workflow. Conversation history resolves follow-up questions within each session.
 
-**Submission status:** implementation and offline validation are available. The required live notebook outputs are pending valid OpenAI and Tavily credentials. This repository is not yet a rubric-complete submission; `scripts/verify_submission.py` intentionally fails until the real executed notebooks are saved.
+**Submission status:** Part 1 has been executed with real OpenAI embeddings and saved outputs, including all 15 records, collection persistence and semantic search. Part 2's live agent demonstration is pending a Tavily credential. This repository is not yet a rubric-complete submission; `scripts/verify_submission.py` intentionally fails until both executed notebooks are saved.
 
 ## Contents
 
@@ -31,7 +31,7 @@ python -m pip install -r requirements-lock.txt
 cp .env.example .env
 ```
 
-Fill in `.env` locally. For the Udacity workspace, use its `voc-` OpenAI key and `https://openai.vocareum.com/v1` endpoint. For a personal OpenAI account, use its key and set `OPENAI_BASE_URL=https://api.openai.com/v1`. Provide a Tavily key in `TAVILY_API_KEY`. Keep `.env` out of Git. All three values are checked without printing credentials.
+Fill in `.env` locally. For the Udacity workspace, use its `voc-` OpenAI key and `https://openai.vocareum.com/v1` endpoint. For a personal OpenAI account, use its key and set `OPENAI_BASE_URL=https://api.openai.com/v1`. Provide a Tavily key in `TAVILY_API_KEY`. Keep `.env` out of Git. Part 1 checks only the OpenAI key and endpoint; Part 2 checks all three values without printing credentials.
 
 The defaults are `gpt-4o-mini` and `text-embedding-3-small`; `OPENAI_MODEL` and `OPENAI_EMBEDDING_MODEL` can override them if supported by the configured provider. Both notebooks use `OPENAI_API_KEY` for embeddings, rather than requiring a second Chroma key. Configuration can be placed in `project/starter/.env`, `project/.env`, the repository root `.env`, or its parent `Research Agent/.env`; the nearest file takes precedence over exported environment values.
 
@@ -45,6 +45,8 @@ python scripts/verify_submission.py --source-only
 python scripts/execute_notebooks.py
 python scripts/verify_submission.py
 ```
+
+To execute just Part 1 with OpenAI configured, use `python scripts/execute_notebooks.py --part 1`. After configuring Tavily, use `--part 2` to run the agent against the existing local database. Omit `--part` to execute both notebooks in order.
 
 The test suite uses deterministic provider substitutes and a temporary real Chroma database; it makes no paid calls. The notebook execution command uses real OpenAI and Tavily requests and may incur provider charges. It runs Part 1 before Part 2 with the correct working directory, saves successful notebook executions in place, and enforces the evidence gate. Keep the generated `project/starter/chromadb/` locally between interactive runs; it is excluded from Git and can be rebuilt from the supplied records.
 

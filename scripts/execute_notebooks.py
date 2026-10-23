@@ -1,5 +1,6 @@
 """Execute and save both deliverables using this environment's Python kernel."""
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -38,20 +39,23 @@ def execute_notebook(notebook, directory):
     return notebook
 
 
-def main():
-    configure_environment()
+def main(part='all'):
+    names = NAMES if part == 'all' else (NAMES[int(part) - 1],)
+    configure_environment(require_web=part != '1')
     # Validate configuration before executing either notebook or starting paid requests.
-    for name in NAMES:
+    for name in names:
         path = STARTER / name
         notebook = nbformat.read(path, as_version=4)
         execute_notebook(notebook, STARTER)
         nbformat.write(notebook, path)
         print(f'Executed and saved {name}', flush=True)
-    problems = verify()
+    problems = verify(names=names)
     if problems:
         raise RuntimeError('\n'.join(problems))
-    print('Both deliverables pass the saved-execution gate.')
+    print('Selected notebooks pass the saved-execution gate.')
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--part', choices=('1', '2', 'all'), default='all')
+    main(parser.parse_args().part)

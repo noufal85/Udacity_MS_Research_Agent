@@ -28,14 +28,14 @@ Official API documentation was retrieved through Context7 for Chroma's `OpenAIEm
 
 | ID | Requirement | Artifact | Validation | Status |
 |---|---|---|---|---|
-| R1 | Load, validate and format all 15 game records | Part 1 notebook; `lib/udaplay.py` | Dataset tests and clean notebook execution | Verified in tests; notebook execution blocked |
-| R2 | Persist embeddings in `chromadb`, collection `udaplay` | Part 1; vector store manager | Restart/reopen and semantic search demonstration | Persistence verified with test vectors; live semantic demonstration blocked |
+| R1 | Load, validate and format all 15 game records | Part 1 notebook; `lib/udaplay.py` | Dataset tests and clean notebook execution | Verified in tests and executed Part 1 notebook |
+| R2 | Persist embeddings in `chromadb`, collection `udaplay` | Part 1; vector store manager | Restart/reopen and semantic search demonstration | Verified with real OpenAI embeddings, collection reopening and saved semantic-search output |
 | R3 | Implement `retrieve_game`, `evaluate_retrieval`, `game_web_search` | `lib/udaplay.py`; Part 2 | Tests of tool results and provider payloads | Verified offline; provider execution blocked |
 | R4 | Retrieve, evaluate, then search only when needed | State machine | Local, insufficient, empty and provider-error branches | Verified offline |
 | R5 | Maintain session history across questions | Research agent | Follow-up and session-isolation tests | Verified offline |
 | R6 | Structured answers with confidence and sources | Typed reports | Citation validation and refusal when no evidence | Verified offline; real answer quality not yet assessed |
-| R7 | At least 3 example queries, both local and web fallback | Part 2 notebook | Inspect saved real outputs and visible stage traces | Blocked: valid OpenAI and Tavily keys are missing |
-| R8 | Save both notebooks after execution, include `lib/` | Required notebook paths | Notebook JSON counts/outputs and clean run | `lib/` included; saved execution gate blocked by credentials |
+| R7 | At least 3 example queries, both local and web fallback | Part 2 notebook | Inspect saved real outputs and visible stage traces | Blocked: Tavily key is missing; OpenAI key validated against the personal OpenAI endpoint |
+| R8 | Save both notebooks after execution, include `lib/` | Required notebook paths | Notebook JSON counts/outputs and clean run | `lib/` included and Part 1 executed; Part 2 saved execution gate blocked by missing Tavily key |
 | R9 | Public `Udacity_MS_Research_Agent` repository | GitHub `noufal85` | Public visibility and local/remote SHA match | Public repository and origin verified; push revision checked at handoff |
 | R10 | Exclude secrets, caches and environments; document setup | Root README and ignore rules | Tracked-file audit, secret scan, dependency check | Verified: no secret-shaped values or excluded runtime files staged; dependency and whitespace checks pass |
 
@@ -43,4 +43,4 @@ Implementation sequence: tests, dataset ingestion and persistence, tools and typ
 
 ## Runtime requirements
 
-Python 3.13 is used locally. Live notebook execution needs `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `TAVILY_API_KEY`. Secrets must remain in the environment or an ignored `.env`. The previously rejected credential from the other project is not reused.
+Python 3.13 is used locally. Part 1 needs `OPENAI_API_KEY` and `OPENAI_BASE_URL`; Part 2 also needs `TAVILY_API_KEY`. Secrets must remain in the environment or an ignored `.env`. With explicit user authorization, the previously shared key was verified against `https://api.openai.com/v1` and used in an ephemeral process to execute Part 1. The earlier HTTP 401 from the other project did not establish that the key was invalid. No credential is saved in the repository.

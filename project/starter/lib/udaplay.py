@@ -74,7 +74,7 @@ class ResearchReport(BaseModel):
             print(f'[{source.source_id}] {source.title}: {source.url}')
 
 
-def configure_environment():
+def configure_environment(require_web=True):
     """Find project-local configuration independently of the notebook runner's cwd."""
     starter = Path(__file__).resolve().parents[1]
     # The nearest configuration wins; existing exported values remain usable.
@@ -83,7 +83,9 @@ def configure_environment():
         if candidate.is_file():
             load_dotenv(candidate, override=True)
             break
-    required = ('OPENAI_API_KEY', 'OPENAI_BASE_URL', 'TAVILY_API_KEY')
+    required = ['OPENAI_API_KEY', 'OPENAI_BASE_URL']
+    if require_web:
+        required.append('TAVILY_API_KEY')
     missing = [name for name in required if not os.getenv(name)]
     if missing:
         raise RuntimeError('Missing configuration: ' + ', '.join(missing))

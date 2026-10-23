@@ -27,9 +27,9 @@ def execution_problems(notebook):
     return problems
 
 
-def verify(source_only=False):
+def verify(source_only=False, names=NAMES):
     problems = []
-    for name in NAMES:
+    for name in names:
         notebook = nbformat.read(STARTER / name, as_version=4)
         nbformat.validate(notebook)
         for index, cell in enumerate(notebook.cells):
