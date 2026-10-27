@@ -192,3 +192,25 @@ def test_provider_failure_is_not_saved_as_success():
     with pytest.raises(ConnectionError):
         agent.invoke('Release?')
     assert not agent.history.get('default')
+
+
+def test_followup_context_highlights_latest_topic_without_source_documents():
+    client = StructuredClient([
+        {'useful': True, 'confidence': 0.9, 'description': 'Supported.'},
+        {'answer': 'Released in 1999.', 'confidence': 0.9, 'source_ids': ['local:006']},
+        {'query': 'Who published Super Mario 64?'},
+        {'useful': True, 'confidence': 0.9, 'description': 'Supported.'},
+        {'answer': 'Nintendo published Super Mario 64.', 'confidence': 0.9, 'source_ids': ['local:006']},
+        {'query': 'Which platform was Super Mario 64 released on?'},
+        {'useful': True, 'confidence': 0.9, 'description': 'Supported.'},
+        {'answer': 'Nintendo 64.', 'confidence': 0.9, 'source_ids': ['local:006']},
+    ])
+    agent = module().ResearchAgent(Store([local_document()]), client, Search([]))
+    agent.invoke('When was Pokémon Gold and Silver released?')
+    agent.invoke('Who published Super Mario 64?')
+    agent.invoke('And on which platform?')
+    payload = json.loads(client.calls[5]['messages'][1]['content'])
+    assert payload['latest_turn']['question'] == 'Who published Super Mario 64?'
+    assert payload['latest_turn']['answer'] == 'Nintendo published Super Mario 64.'
+    assert 'documents' not in payload
+    assert 'content' not in payload['latest_turn']

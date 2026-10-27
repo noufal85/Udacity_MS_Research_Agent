@@ -30,7 +30,7 @@ save_notebook('Udaplay_01_starter_project.ipynb', [
     md('# UdaPlay Part 1\n\nBuild a persistent vector database from the fifteen supplied game records. '
        'Run this notebook before Part 2, from `project/starter`. '
        'The database directory is `chromadb` and the collection is `udaplay`.'),
-    md('## Environment\n\nConfigure `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `TAVILY_API_KEY` '
+    md('## Environment\n\nConfigure `OPENAI_API_KEY` and `OPENAI_BASE_URL` '
        'using an ignored `.env` or exported environment variables. Credentials are never displayed.'),
     code('import importlib.util\nimport sys\n\n'
          'if importlib.util.find_spec("pysqlite3") is not None:\n'
@@ -85,11 +85,13 @@ save_notebook('Udaplay_02_starter_project.ipynb', [
          'agent = ResearchAgent.from_environment(database_path="chromadb")\n'
          'assert agent.store.collection.count() == 15\n'
          'print("Research model:", settings["model"])\n'
+         'print("Web search provider:", settings["web_provider"])\n'
          'print("Database loaded:", agent.store.collection.name)'),
     md('## Tools and state machine\n\n'
        '- `retrieve_game`: query the persistent vector database and retain source metadata.\n'
        '- `evaluate_retrieval`: return a typed `EvaluationReport` with sufficiency, confidence and an explanation.\n'
-       '- `game_web_search`: use Tavily when evidence is absent or insufficient.\n\n'
+       '- `game_web_search`: use OpenAI hosted web search with the same API key when evidence '
+       'is absent or insufficient; retain real URL citations. Tavily remains optional.\n\n'
        'The implementations are in `lib/udaplay.py`. The supplied `lib/state_machine.py` '
        'executes explicit retrieve → evaluate → optional web search → report nodes. '
        'Local support below 70% routes to web search even if the evaluator marks it useful. '
@@ -118,7 +120,9 @@ save_notebook('Udaplay_02_starter_project.ipynb', [
     code('followup = agent.invoke("Which company published that game?", session_id="examples")\n'
          'followup.display()\n'
          'print("Session turns:", len(agent.history["examples"]))\n'
-         'assert len(agent.history["examples"]) == 4'),
+         'assert len(agent.history["examples"]) == 4\n'
+         'assert "mortal kombat x" in followup.resolved_question.lower(), '
+         '"Follow-up must refer to the most recent game"'),
     md('## Performance and evidence checks\n\nThe assertions below verify demonstrated behavior, '
        'rather than assuming the prompts caused the intended route. Confidence is the model’s '
        'self-assessed support, not a calibrated probability of correctness. '

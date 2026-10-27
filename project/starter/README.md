@@ -2,8 +2,10 @@
 
 This file is the supplied starter guide. For the completed implementation's setup,
 configuration, test commands and execution status, use the repository root README.
-The final assignment specifies `OPENAI_API_KEY`, `OPENAI_BASE_URL` and
-`TAVILY_API_KEY`; this implementation does not require a separate Chroma key.
+The final assignment originally specifies `OPENAI_API_KEY`, `OPENAI_BASE_URL` and
+`TAVILY_API_KEY`. At the user's request, the implementation now defaults to OpenAI
+hosted web search using the same OpenAI key; Tavily remains optional. There is no
+separate Chroma key requirement.
 Persistent long-term memory is optional; session conversation memory is implemented.
 
 ## Project Overview
